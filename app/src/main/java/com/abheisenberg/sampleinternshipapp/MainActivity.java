@@ -11,6 +11,9 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 
@@ -55,15 +58,56 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     }
 
     private void createAccount(String email, String pw){
+        Log.d(TAG, "createAccount: "+email);
+        if(!validateForm()){
+            return;
+        }
 
+        mAuth.createUserWithEmailAndPassword(email, pw)
+                .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
+                    @Override
+                    public void onComplete(@NonNull Task<AuthResult> task) {
+                        if(task.isSuccessful()){
+                            //Successfully created the account, but not verified yet
+                            Log.d(TAG, "Successfully created accnt(not verified yet)");
+                            updateSreenUI(mAuth.getCurrentUser());
+                        } else {
+                            //Creation of account failed, display an error message to user
+                            Log.w(TAG, "creation of user with E and P failed:  ", task.getException());
+                            Toast.makeText(MainActivity.this, "Authentication failed", Toast.LENGTH_SHORT).show();
+                            updateSreenUI(null);
+                        }
+                    }
+                });
     }
 
     private void signIn(String email, String pw){
+        Log.d(TAG, "signIn attempt from "+email);
+        if(!validateForm()){
+            return;
+        }
 
+        mAuth.signInWithEmailAndPassword(email, pw)
+                .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
+                    @Override
+                    public void onComplete(@NonNull Task<AuthResult> task) {
+                        if(task.isSuccessful()){
+                            //Successfully signed in
+                            Log.d(TAG, "Successfully signed in ");
+                            updateSreenUI(mAuth.getCurrentUser());
+                        } else {
+                            //Sign in failed, display an error msg to user
+                            Toast.makeText(MainActivity.this, "Authentication failed", Toast.LENGTH_SHORT).show();
+                            updateSreenUI(null);
+                            tv_status.setText("Authentication failed");
+                        }
+                    }
+                });
     }
 
     private void signOut(){
-
+        mAuth.signOut();
+        updateSreenUI(null);
     }
 
     private void sendEmailVerification(){
