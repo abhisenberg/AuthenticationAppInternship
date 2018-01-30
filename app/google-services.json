@@ -1,0 +1,55 @@
+{
+  "project_info": {
+    "project_number": "233811282606",
+    "firebase_url": "https://sampleinternshipapp.firebaseio.com",
+    "project_id": "sampleinternshipapp",
+    "storage_bucket": "sampleinternshipapp.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:233811282606:android:d924d561f9a9854e",
+        "android_client_info": {
+          "package_name": "com.abheisenberg.sampleinternshipapp"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "233811282606-uldu9f0lplbv5sq5k2kaglcv5100k0li.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.abheisenberg.sampleinternshipapp",
+            "certificate_hash": "2dd70ea96b3af8e3dbc2f7f6ecd3bcd01253e879"
+          }
+        },
+        {
+          "client_id": "233811282606-qp8hu8o65qn3q1boblibos0pvrqnaumi.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBGkk63UAbv3blB9xdLhD8_PJW10cJ6LRc"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 2,
+          "other_platform_oauth_client": [
+            {
+              "client_id": "233811282606-qp8hu8o65qn3q1boblibos0pvrqnaumi.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
