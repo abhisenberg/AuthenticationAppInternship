@@ -1,7 +1,6 @@
 package com.abheisenberg.sampleinternshipapp;
 
 import android.support.annotation.NonNull;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.util.Log;
@@ -17,14 +16,13 @@ import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 
-public class MainActivity extends AppCompatActivity implements View.OnClickListener {
+public class MainActivity extends BaseActivity implements View.OnClickListener {
 
     private static final String TAG = "MainAct";
 
     private FirebaseAuth mAuth;
-    private FirebaseAuth.AuthStateListener mAuthStateListener;
 
-    private TextView tv_status;
+    private TextView tv_status, tv_details;
     private EditText et_emailid, et_pw;
     private Button bt_signin, bt_signout ,bt_register ,bt_sendVerificatoinMail;
 
@@ -34,6 +32,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         setContentView(R.layout.activity_main);
 
         tv_status = (TextView) findViewById(R.id.tv_status);
+        tv_details = (TextView) findViewById(R.id.tv_details);
         et_emailid = (EditText) findViewById(R.id.et_emailid);
         et_pw = (EditText) findViewById(R.id.et_pw);
         bt_signin = (Button) findViewById(R.id.bt_signin);
@@ -41,20 +40,24 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         bt_register = (Button) findViewById(R.id.bt_register);
         bt_sendVerificatoinMail = (Button) findViewById(R.id.bt_sendverification);
 
+        bt_signin.setOnClickListener(this);
+        bt_signout.setOnClickListener(this);
+        bt_register.setOnClickListener(this);
+        bt_sendVerificatoinMail.setOnClickListener(this);
+
         mAuth = FirebaseAuth.getInstance();
-        mAuthStateListener = new FirebaseAuth.AuthStateListener() {
-            @Override
-            public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
-                FirebaseUser user = firebaseAuth.getCurrentUser();
-                if(user != null){
-                    Log.d(TAG, "onAuthStateChanged: signed_in");
-                    Toast.makeText(MainActivity.this, "Signed In", Toast.LENGTH_SHORT).show();
-                } else {
-                    Log.d(TAG, "onAuthStateChanged: signed_out");
-                    Toast.makeText(MainActivity.this, "Signed_out", Toast.LENGTH_SHORT).show();
-                }
-            }
-        };
+
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        updateSreenUI(mAuth.getCurrentUser());
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
     }
 
     private void createAccount(String email, String pw){
@@ -62,6 +65,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         if(!validateForm()){
             return;
         }
+
+        showLoadingDialog();
 
         mAuth.createUserWithEmailAndPassword(email, pw)
                 .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
@@ -77,15 +82,20 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                             Toast.makeText(MainActivity.this, "Authentication failed", Toast.LENGTH_SHORT).show();
                             updateSreenUI(null);
                         }
+
+                        hideLoadingDialog();
                     }
                 });
     }
 
     private void signIn(String email, String pw){
         Log.d(TAG, "signIn attempt from "+email);
+
         if(!validateForm()){
             return;
         }
+
+        showLoadingDialog();
 
         mAuth.signInWithEmailAndPassword(email, pw)
                 .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
@@ -101,6 +111,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                             updateSreenUI(null);
                             tv_status.setText("Authentication failed");
                         }
+
+                        hideLoadingDialog();
+
                     }
                 });
     }
@@ -111,7 +124,30 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     }
 
     private void sendEmailVerification(){
+        bt_sendVerificatoinMail.setEnabled(false);
 
+        showLoadingDialog();
+
+        final FirebaseUser user = mAuth.getCurrentUser();
+        user.sendEmailVerification()
+                .addOnCompleteListener(this, new OnCompleteListener<Void>() {
+                    @Override
+                    public void onComplete(@NonNull Task<Void> task) {
+                        bt_sendVerificatoinMail.setEnabled(true);
+
+                        if(task.isSuccessful()){
+                            Log.d(TAG, "Verification mail sent to  "+user.getEmail());
+                            Toast.makeText(MainActivity.this, "Verification mail sent to "+ user.getEmail(),
+                                    Toast.LENGTH_SHORT).show();
+                        } else {
+                            Log.e(TAG, "Verification mail not sent ", task.getException());
+                            Toast.makeText(MainActivity.this, "Failed to send verification mail.", Toast.LENGTH_SHORT)
+                                    .show();
+                        }
+
+                        hideLoadingDialog();
+                    }
+                });
     }
 
     private boolean validateForm(){
@@ -136,12 +172,15 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         if(user == null){
             //Signed out
             tv_status.setText(R.string.signedout);
+            tv_details.setText(null);
             et_emailid.setVisibility(View.VISIBLE);
             et_pw.setVisibility(View.VISIBLE);
             bt_signin.setVisibility(View.VISIBLE);
             bt_register.setVisibility(View.VISIBLE);
             bt_signout.setVisibility(View.GONE);
-        } else {
+            bt_sendVerificatoinMail.setVisibility(View.GONE);
+        }
+        else {
             //Signed in
             tv_status.setText(R.string.signedin);
             et_emailid.setVisibility(View.GONE);
@@ -149,25 +188,23 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             bt_signin.setVisibility(View.GONE);
             bt_register.setVisibility(View.GONE);
             bt_signout.setVisibility(View.VISIBLE);
-        }
-    }
 
-    @Override
-    protected void onStart() {
-        super.onStart();
-        mAuth.addAuthStateListener(mAuthStateListener);
-    }
 
-    @Override
-    protected void onStop() {
-        super.onStop();
-        if(mAuthStateListener != null){
-            mAuth.removeAuthStateListener(mAuthStateListener);
+            if(user.isEmailVerified()){
+                tv_details.setText(R.string.verified);
+                bt_sendVerificatoinMail.setVisibility(View.GONE);
+            } else {
+                tv_details.setText(R.string.notverified);
+                bt_sendVerificatoinMail.setVisibility(View.VISIBLE);
+            }
         }
     }
 
     @Override
     public void onClick(View v) {
+
+        hideKeyboard(this);
+
         int whichButton = v.getId();
 
         if(whichButton == R.id.bt_register){

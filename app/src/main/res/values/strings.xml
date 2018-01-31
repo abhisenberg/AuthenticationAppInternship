@@ -1,6 +1,9 @@
 <resources>
     <string name="app_name">Sample Internship App</string>
-    <string name="signedout">Currently not signed-in</string>
-    <string name="signedin">Already signed in</string>
+    <string name="signedout">Not Signed-in yet</string>
+    <string name="signedin">Signed in</string>
+    <string name="notverified">Verification from email is pending</string>
+    <string name="verified">Verified</string>
+    <string name="loading">Loading...</string>
 
 </resources>
