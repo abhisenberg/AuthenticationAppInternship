@@ -29,52 +29,75 @@
     <EditText
         android:id="@+id/et_emailid"
         android:hint="Email Id"
+        android:padding="8dp"
+        android:background="@drawable/etbox_modified_states"
         android:layout_margin="12dp"
         android:inputType="textEmailAddress"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content" />
+        android:layout_height="45dp" />
 
     <EditText
         android:id="@+id/et_pw"
         android:hint="Password"
         android:layout_margin="12dp"
+        android:padding="8dp"
+        android:background="@drawable/etbox_modified_states"
         android:inputType="textPassword"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content" />
+        android:layout_height="45dp" />
 
    <LinearLayout
        android:gravity="center"
-       android:orientation="horizontal"
+       android:orientation="vertical"
        android:layout_width="match_parent"
        android:layout_height="wrap_content">
        <Button
            android:id="@+id/bt_signin"
            android:text="Sign In"
-           android:layout_width="wrap_content"
+           android:textColor="#FFFFFF"
+           android:background="@drawable/button_signin"
+           android:textStyle="bold"
+           android:layout_marginStart="15dp"
+           android:layout_marginEnd="15dp"
+           android:layout_width="match_parent"
            android:layout_height="wrap_content" />
        <Button
            android:id="@+id/bt_register"
-           android:text="Register"
+           android:text="No account? Register now!"
+           android:background="#0000"
+           android:textColor="@android:color/holo_green_dark"
            android:layout_width="wrap_content"
            android:layout_height="wrap_content" />
    </LinearLayout>
 
     <LinearLayout
         android:layout_gravity="center"
-        android:layout_width="wrap_content"
+        android:orientation="vertical"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content">
 
         <Button
             android:id="@+id/bt_signout"
             android:layout_gravity="center"
+            android:layout_marginStart="15dp"
+            android:layout_marginEnd="15dp"
+            android:background="@drawable/button_signout"
+            android:textColor="#FFFFFF"
+            android:textStyle="bold"
             android:text="Sign Out"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content" />
 
         <Button
+            android:layout_gravity="center"
             android:id="@+id/bt_sendverification"
             android:text="Send Verification mail"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
+            android:background="@drawable/button_verify"
+            android:layout_marginStart="15dp"
+            android:layout_marginEnd="15dp"
+            android:layout_marginTop="5dp"
+            android:textColor="#FFFFFF"
             android:layout_height="wrap_content" />
     </LinearLayout>
 
