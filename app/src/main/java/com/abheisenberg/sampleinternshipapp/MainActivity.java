@@ -1,5 +1,6 @@
 package com.abheisenberg.sampleinternshipapp;
 
+import android.graphics.Color;
 import android.support.annotation.NonNull;
 import android.os.Bundle;
 import android.text.TextUtils;
@@ -15,6 +16,7 @@ import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.auth.UserProfileChangeRequest;
 
 public class MainActivity extends BaseActivity implements View.OnClickListener {
 
@@ -22,7 +24,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
 
     private FirebaseAuth mAuth;
 
-    private TextView tv_status, tv_details;
+    private TextView tv_status;
     private EditText et_emailid, et_pw;
     private Button bt_signin, bt_signout ,bt_register ,bt_sendVerificatoinMail;
 
@@ -32,7 +34,6 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
         setContentView(R.layout.activity_main);
 
         tv_status = (TextView) findViewById(R.id.tv_status);
-        tv_details = (TextView) findViewById(R.id.tv_details);
         et_emailid = (EditText) findViewById(R.id.et_emailid);
         et_pw = (EditText) findViewById(R.id.et_pw);
         bt_signin = (Button) findViewById(R.id.bt_signin);
@@ -109,7 +110,8 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
                             //Sign in failed, display an error msg to user
                             Toast.makeText(MainActivity.this, "Authentication failed", Toast.LENGTH_SHORT).show();
                             updateSreenUI(null);
-                            tv_status.setText("Authentication failed");
+                            tv_status.setText("No Account! Please register!");
+                            tv_status.setTextColor(Color.parseColor("#ff9a4c"));
                         }
 
                         hideLoadingDialog();
@@ -172,7 +174,6 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
         if(user == null){
             //Signed out
             tv_status.setText(R.string.signedout);
-            tv_details.setText(null);
             et_emailid.setVisibility(View.VISIBLE);
             et_pw.setVisibility(View.VISIBLE);
             bt_signin.setVisibility(View.VISIBLE);
@@ -182,7 +183,6 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
         }
         else {
             //Signed in
-            tv_status.setText(R.string.signedin);
             et_emailid.setVisibility(View.GONE);
             et_pw.setVisibility(View.GONE);
             bt_signin.setVisibility(View.GONE);
@@ -191,12 +191,15 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
 
 
             if(user.isEmailVerified()){
-                tv_details.setText(R.string.verified);
+                tv_status.setText("Hello "+user.getDisplayName()+"!");
+                tv_status.setTextColor(Color.parseColor("#c70039"));
                 bt_sendVerificatoinMail.setVisibility(View.GONE);
             } else {
-                tv_details.setText(R.string.notverified);
+                tv_status.setText("Please verify your email from the link!");
+                tv_status.setTextColor(Color.parseColor("#ff9a4c"));
                 bt_sendVerificatoinMail.setVisibility(View.VISIBLE);
             }
+
         }
     }
 

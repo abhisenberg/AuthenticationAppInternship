@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:orientation="vertical"
@@ -10,19 +10,14 @@
 
     <TextView
         android:id="@+id/tv_status"
-        android:layout_margin="12dp"
+        android:layout_marginTop="30dp"
+        android:layout_marginStart="12dp"
+        android:layout_marginEnd="12dp"
         android:gravity="center"
         android:textSize="25sp"
         android:text="Current Status"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content" />
-
-    <TextView
-        android:id="@+id/tv_details"
-        android:layout_margin="12dp"
-        android:gravity="center"
-        android:textSize="18sp"
-        android:text="Details of user"
+        android:textStyle="bold"
+        android:layout_gravity="center"
         android:layout_width="match_parent"
         android:layout_height="wrap_content" />
 
@@ -30,9 +25,12 @@
         android:id="@+id/et_emailid"
         android:hint="Email Id"
         android:padding="8dp"
+        android:layout_below="@id/tv_status"
         android:background="@drawable/etbox_modified_states"
-        android:layout_margin="12dp"
         android:inputType="textEmailAddress"
+        android:layout_marginTop="45dp"
+        android:layout_marginStart="12dp"
+        android:layout_marginEnd="12dp"
         android:layout_width="match_parent"
         android:layout_height="45dp" />
 
@@ -40,6 +38,7 @@
         android:id="@+id/et_pw"
         android:hint="Password"
         android:layout_margin="12dp"
+        android:layout_below="@id/et_emailid"
         android:padding="8dp"
         android:background="@drawable/etbox_modified_states"
         android:inputType="textPassword"
@@ -47,6 +46,8 @@
         android:layout_height="45dp" />
 
    <LinearLayout
+       android:id="@+id/ll_signin"
+       android:layout_below="@id/et_pw"
        android:gravity="center"
        android:orientation="vertical"
        android:layout_width="match_parent"
@@ -73,12 +74,27 @@
     <LinearLayout
         android:layout_gravity="center"
         android:orientation="vertical"
+        android:layout_alignParentBottom="true"
+        android:layout_marginBottom="10dp"
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
 
         <Button
+            android:id="@+id/bt_sendverification"
+            android:layout_gravity="center"
+            android:text="Send Verification mail"
+            android:layout_width="match_parent"
+            android:background="@drawable/button_verify"
+            android:layout_marginStart="15dp"
+            android:layout_marginEnd="15dp"
+            android:textStyle="bold"
+            android:textColor="#FFFFFF"
+            android:layout_height="wrap_content" />
+
+        <Button
             android:id="@+id/bt_signout"
             android:layout_gravity="center"
+            android:layout_marginTop="5dp"
             android:layout_marginStart="15dp"
             android:layout_marginEnd="15dp"
             android:background="@drawable/button_signout"
@@ -88,17 +104,6 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content" />
 
-        <Button
-            android:layout_gravity="center"
-            android:id="@+id/bt_sendverification"
-            android:text="Send Verification mail"
-            android:layout_width="match_parent"
-            android:background="@drawable/button_verify"
-            android:layout_marginStart="15dp"
-            android:layout_marginEnd="15dp"
-            android:layout_marginTop="5dp"
-            android:textColor="#FFFFFF"
-            android:layout_height="wrap_content" />
     </LinearLayout>
 
-</LinearLayout>
+</RelativeLayout>
