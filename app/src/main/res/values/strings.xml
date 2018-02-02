@@ -1,10 +1,12 @@
 <resources>
     <string name="app_name">Sample Internship App</string>
-    <string name="signedout">Not Signed-in yet</string>
     <string name="signedin">Signed in</string>
     <string name="notverified">Verification from email is pending</string>
     <string name="verified">Verified</string>
     <string name="loading">Loading...</string>
+    <string name="sendinglingk">Sending verification link...</string>
+    <string name="signedout">Successfully signed-out!</string>
+    <string name="registerfailed">Registration failed. Please try later.</string>
 
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>

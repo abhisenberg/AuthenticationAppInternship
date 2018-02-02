@@ -16,12 +16,12 @@ import android.widget.EditText;
 /**
  * A simple {@link Fragment} subclass.
  * Activities that contain this fragment must implement the
- * {@link RegisterFragment.OnFragmentInteractionListener} interface
+ * {@link RegisterFragment.OnRegisterAttemptListener} interface
  * to handle interaction events.
  */
 public class RegisterFragment extends Fragment implements View.OnClickListener{
 
-    private OnFragmentInteractionListener mListener;
+    private OnRegisterAttemptListener registerAttempt;
 
     private Button bt_register;
     private EditText et_name, et_email, et_pw;
@@ -52,39 +52,43 @@ public class RegisterFragment extends Fragment implements View.OnClickListener{
     }
 
     // TODO: Rename method, update argument and hook method into UI event
-    public void onButtonPressed(Uri uri) {
-        if (mListener != null) {
-            mListener.onFragmentInteraction(uri);
+    public void onButtonPressed(String name, String email, String pw) {
+        if (registerAttempt != null) {
+            registerAttempt.onRegisterAttempt(name, email, pw);
         }
     }
 
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
-        if (context instanceof OnFragmentInteractionListener) {
-            mListener = (OnFragmentInteractionListener) context;
+        if (context instanceof OnRegisterAttemptListener) {
+            registerAttempt = (OnRegisterAttemptListener) context;
         } else {
             throw new RuntimeException(context.toString()
-                    + " must implement OnFragmentInteractionListener");
+                    + " must implement OnRegisterAttemptListener");
         }
     }
 
     @Override
     public void onDetach() {
         super.onDetach();
-        mListener = null;
+        registerAttempt = null;
     }
 
     @Override
     public void onClick(View v) {
-        if(v.getId() == R.id.bt_register){
+        if(v.getId() == R.id.bt_rf_register){
 
             if(validateForm()){
 
-                FragmentTransaction fTrans = getFragmentManager().beginTransaction();
+                onButtonPressed(
+                        et_name.getText().toString(),
+                        et_email.getText().toString(),
+                        et_pw.getText().toString()
+                );
 
+                FragmentTransaction fTrans = getFragmentManager().beginTransaction();
                 fTrans.setCustomAnimations(R.animator.fade_in, R.animator.fade_out);
-//                fTrans.replace(R.id.fragment, new WelcomeFragment());
                 fTrans.commit();
             }
 
@@ -119,8 +123,8 @@ public class RegisterFragment extends Fragment implements View.OnClickListener{
      * "http://developer.android.com/training/basics/fragments/communicating.html"
      * >Communicating with Other Fragments</a> for more information.
      */
-    public interface OnFragmentInteractionListener {
+    public interface OnRegisterAttemptListener {
         // TODO: Update argument type and name
-        void onFragmentInteraction(Uri uri);
+        void onRegisterAttempt(String name, String email, String pw);
     }
 }

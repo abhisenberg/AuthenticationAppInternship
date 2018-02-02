@@ -4,6 +4,7 @@ import android.graphics.Color;
 import android.net.Uri;
 import android.support.annotation.NonNull;
 import android.os.Bundle;
+import android.support.design.widget.Snackbar;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
@@ -19,43 +20,43 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.UserProfileChangeRequest;
 
-public class MainActivity extends BaseActivity implements View.OnClickListener, LoginFragment.OnFragmentInteractionListener,
-                    RegisterFragment.OnFragmentInteractionListener, LoginFragment.Login{
+public class MainActivity extends BaseActivity implements RegisterFragment.OnRegisterAttemptListener, LoginFragment.OnLoginAttempt,
+        WelcomeFragment.OnSignoutAttempt{
 
     private static final String TAG = "MainAct";
 
     private FirebaseAuth mAuth;
-
-    private TextView tv_status;
-    private EditText et_emailid, et_pw;
-    private Button bt_signin, bt_signout ,bt_register ,bt_sendVerificatoinMail;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        tv_status = (TextView) findViewById(R.id.tv_status);
-        et_emailid = (EditText) findViewById(R.id.et_emailid);
-        et_pw = (EditText) findViewById(R.id.et_pw);
-        bt_signin = (Button) findViewById(R.id.bt_signin);
-        bt_signout = (Button) findViewById(R.id.bt_signout);
-        bt_register = (Button) findViewById(R.id.bt_register);
-        bt_sendVerificatoinMail = (Button) findViewById(R.id.bt_sendverification);
-
-        bt_signin.setOnClickListener(this);
-        bt_signout.setOnClickListener(this);
-        bt_register.setOnClickListener(this);
-        bt_sendVerificatoinMail.setOnClickListener(this);
-
         mAuth = FirebaseAuth.getInstance();
 
+        goToFragment(mAuth.getCurrentUser());
+    }
+
+    private void goToFragment(FirebaseUser currentUser) {
+        if(currentUser == null){
+            getFragmentManager().beginTransaction()
+                    .setCustomAnimations(R.animator.fade_in, R.animator.fade_out)
+                    .replace(R.id.Fragment, new LoginFragment())
+                    .commit();
+        } else {
+
+            Log.d(TAG, "User: "+currentUser.getEmail());
+
+            getFragmentManager().beginTransaction()
+                    .setCustomAnimations(R.animator.fade_in, R.animator.fade_out)
+                    .replace(R.id.Fragment, new WelcomeFragment())
+                    .commit();
+        }
     }
 
     @Override
     protected void onStart() {
         super.onStart();
-        updateSreenUI(mAuth.getCurrentUser());
     }
 
     @Override
@@ -63,40 +64,8 @@ public class MainActivity extends BaseActivity implements View.OnClickListener, 
         super.onStop();
     }
 
-    private void createAccount(String email, String pw){
-        Log.d(TAG, "createAccount: "+email);
-        if(!validateForm()){
-            return;
-        }
-
-        showLoadingDialog();
-
-        mAuth.createUserWithEmailAndPassword(email, pw)
-                .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
-                    @Override
-                    public void onComplete(@NonNull Task<AuthResult> task) {
-                        if(task.isSuccessful()){
-                            //Successfully created the account, but not verified yet
-                            Log.d(TAG, "Successfully created accnt(not verified yet)");
-                            updateSreenUI(mAuth.getCurrentUser());
-                        } else {
-                            //Creation of account failed, display an error message to user
-                            Log.w(TAG, "creation of user with E and P failed:  ", task.getException());
-                            Toast.makeText(MainActivity.this, "Authentication failed", Toast.LENGTH_SHORT).show();
-                            updateSreenUI(null);
-                        }
-
-                        hideLoadingDialog();
-                    }
-                });
-    }
-
     private void signIn(String email, String pw){
         Log.d(TAG, "signIn attempt from "+email);
-
-        if(!validateForm()){
-            return;
-        }
 
         showLoadingDialog();
 
@@ -105,15 +74,25 @@ public class MainActivity extends BaseActivity implements View.OnClickListener, 
                     @Override
                     public void onComplete(@NonNull Task<AuthResult> task) {
                         if(task.isSuccessful()){
-                            //Successfully signed in
-                            Log.d(TAG, "Successfully signed in ");
-                            updateSreenUI(mAuth.getCurrentUser());
+
+                            if(!mAuth.getCurrentUser().isEmailVerified()){
+
+                                Snackbar.make(findViewById(R.id.Fragment), getString(R.string.notverified),
+                                        Snackbar.LENGTH_LONG)
+                                        .show();
+
+                            } else {
+
+                                getFragmentManager().beginTransaction()
+                                        .setCustomAnimations(R.animator.fade_in, R.animator.fade_out)
+                                        .replace(R.id.Fragment, new WelcomeFragment())
+                                        .commit();
+
+                            }
+
                         } else {
                             //Sign in failed, display an error msg to user
                             Toast.makeText(MainActivity.this, "Authentication failed", Toast.LENGTH_SHORT).show();
-                            updateSreenUI(null);
-                            tv_status.setText("No Account! Please register!");
-                            tv_status.setTextColor(Color.parseColor("#ff9a4c"));
                         }
 
                         hideLoadingDialog();
@@ -124,29 +103,34 @@ public class MainActivity extends BaseActivity implements View.OnClickListener, 
 
     private void signOut(){
         mAuth.signOut();
-        updateSreenUI(null);
+
+        Toast.makeText(this, getString(R.string.signedout), Toast.LENGTH_SHORT).show();
+
+        getFragmentManager().beginTransaction()
+                .setCustomAnimations(R.animator.fade_in, R.animator.fade_out)
+                .replace(R.id.Fragment, new LoginFragment())
+                .commit();
     }
 
-    private void sendEmailVerification(){
-        bt_sendVerificatoinMail.setEnabled(false);
+    private void createAccount(String email, String pw){
+        Log.d(TAG, "createAccount: "+email);
 
         showLoadingDialog();
 
-        final FirebaseUser user = mAuth.getCurrentUser();
-        user.sendEmailVerification()
-                .addOnCompleteListener(this, new OnCompleteListener<Void>() {
+        mAuth.createUserWithEmailAndPassword(email, pw)
+                .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
                     @Override
-                    public void onComplete(@NonNull Task<Void> task) {
-                        bt_sendVerificatoinMail.setEnabled(true);
-
+                    public void onComplete(@NonNull Task<AuthResult> task) {
                         if(task.isSuccessful()){
-                            Log.d(TAG, "Verification mail sent to  "+user.getEmail());
-                            Toast.makeText(MainActivity.this, "Verification mail sent to "+ user.getEmail(),
-                                    Toast.LENGTH_SHORT).show();
+
+                            getFragmentManager().beginTransaction()
+                                    .setCustomAnimations(R.animator.fade_in, R.animator.fade_out)
+                                    .replace(R.id.Fragment, new LoginFragment())
+                                    .commit();
+
                         } else {
-                            Log.e(TAG, "Verification mail not sent ", task.getException());
-                            Toast.makeText(MainActivity.this, "Failed to send verification mail.", Toast.LENGTH_SHORT)
-                                    .show();
+                            Toast.makeText(MainActivity.this, getString(R.string.registerfailed),
+                                    Toast.LENGTH_SHORT).show();
                         }
 
                         hideLoadingDialog();
@@ -154,85 +138,43 @@ public class MainActivity extends BaseActivity implements View.OnClickListener, 
                 });
     }
 
-    private boolean validateForm(){
-        boolean isValid = true;
+    private void sendEmailVerification(){
 
-        String email = et_emailid.getText().toString();
-        if(TextUtils.isEmpty(email)){
-            et_emailid.setError("Required");
-            isValid = false;
-        }
+        showLoadingDialog(getString(R.string.sendinglingk));
 
-        String pw = et_pw.getText().toString();
-        if(TextUtils.isEmpty(pw)){
-            et_emailid.setError("Required");
-            isValid = false;
-        }
+        final FirebaseUser user = mAuth.getCurrentUser();
+        user.sendEmailVerification()
+                .addOnCompleteListener(this, new OnCompleteListener<Void>() {
+                    @Override
+                    public void onComplete(@NonNull Task<Void> task) {
 
-        return isValid;
-    }
+                        if(task.isSuccessful()){
+                            Toast.makeText(MainActivity.this, "Verification mail sent to "+ user.getEmail(),
+                                    Toast.LENGTH_SHORT).show();
+                        } else {
 
-    private void updateSreenUI(FirebaseUser user){
-        if(user == null){
-            //Signed out
-            tv_status.setText(R.string.signedout);
-            et_emailid.setVisibility(View.VISIBLE);
-            et_pw.setVisibility(View.VISIBLE);
-            bt_signin.setVisibility(View.VISIBLE);
-            bt_register.setVisibility(View.VISIBLE);
-            bt_signout.setVisibility(View.GONE);
-            bt_sendVerificatoinMail.setVisibility(View.GONE);
-        }
-        else {
-            //Signed in
-            et_emailid.setVisibility(View.GONE);
-            et_pw.setVisibility(View.GONE);
-            bt_signin.setVisibility(View.GONE);
-            bt_register.setVisibility(View.GONE);
-            bt_signout.setVisibility(View.VISIBLE);
+                            Toast.makeText(MainActivity.this, "Failed to send verification mail.", Toast.LENGTH_SHORT)
+                                    .show();
 
+                        }
 
-            if(user.isEmailVerified()){
-                tv_status.setText("Hello "+user.getDisplayName()+"!");
-                tv_status.setTextColor(Color.parseColor("#c70039"));
-                bt_sendVerificatoinMail.setVisibility(View.GONE);
-            } else {
-                tv_status.setText("Please verify your email from the link!");
-                tv_status.setTextColor(Color.parseColor("#ff9a4c"));
-                bt_sendVerificatoinMail.setVisibility(View.VISIBLE);
-            }
-
-        }
+                        hideLoadingDialog();
+                    }
+                });
     }
 
     @Override
-    public void onClick(View v) {
-
-        hideKeyboard(this);
-
-        int whichButton = v.getId();
-
-        if(whichButton == R.id.bt_register){
-            createAccount(et_emailid.getText().toString(), et_pw.getText().toString());
-
-        } else if (whichButton == R.id.bt_signin){
-            signIn(et_emailid.getText().toString(), et_pw.getText().toString());
-
-        } else if (whichButton == R.id.bt_signout){
-            signOut();
-
-        } else if (whichButton == R.id.bt_sendverification){
-            sendEmailVerification();
-        }
+    public void onRegisterAttempt(String name, String email, String pw) {
+        createAccount(email, pw);
     }
 
     @Override
-    public void onFragmentInteraction(Uri uri) {
-
+    public void OnLoginAttempt(String email, String pw) {
+        signIn(email, pw);
     }
 
     @Override
-    public void loginAttempt(String email, String pw) {
-
+    public void onSignoutAttempt() {
+        signOut();
     }
 }

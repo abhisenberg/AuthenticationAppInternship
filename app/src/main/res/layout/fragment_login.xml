@@ -8,7 +8,6 @@
         android:id="@+id/et_lf_emailid"
         android:hint="Email Id"
         android:padding="8dp"
-        android:layout_below="@id/tv_status"
         android:background="@drawable/etbox_modified_states"
         android:inputType="textEmailAddress"
         android:layout_marginTop="45dp"

@@ -24,6 +24,16 @@ public class BaseActivity extends AppCompatActivity {
         myLoadingDialog.show();
     }
 
+    public void showLoadingDialog(String s){
+        if(myLoadingDialog == null){
+            myLoadingDialog = new ProgressDialog(this);
+            myLoadingDialog.setMessage(s);
+            myLoadingDialog.setIndeterminate(true);
+        }
+
+        myLoadingDialog.show();
+    }
+
     public void hideLoadingDialog(){
         if(myLoadingDialog != null && myLoadingDialog.isShowing()){
             myLoadingDialog.dismiss();

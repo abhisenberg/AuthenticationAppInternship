@@ -17,18 +17,12 @@ import android.widget.EditText;
 /**
  * A simple {@link Fragment} subclass.
  * Activities that contain this fragment must implement the
- * {@link LoginFragment.OnFragmentInteractionListener} interface
+ * {@link LoginFragment.OnLoginAttempt} interface
  * to handle interaction events.
  */
 public class LoginFragment extends Fragment implements View.OnClickListener{
 
-    private OnFragmentInteractionListener mListener;
-
-    public interface Login {
-        void loginAttempt(String email, String pw);
-    }
-
-    Login login;
+    private OnLoginAttempt loginAttempt;
 
     private View rootView;
     private FragmentTransaction fTrans;
@@ -63,27 +57,27 @@ public class LoginFragment extends Fragment implements View.OnClickListener{
     }
 
     // TODO: Rename method, update argument and hook method into UI event
-    public void onButtonPressed(Uri uri) {
-        if (mListener != null) {
-            mListener.onFragmentInteraction(uri);
+    public void onButtonPressed(String email, String pw) {
+        if (loginAttempt != null) {
+            loginAttempt.OnLoginAttempt(email, pw);
         }
     }
 
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
-        if (context instanceof OnFragmentInteractionListener) {
-            mListener = (OnFragmentInteractionListener) context;
+        if (context instanceof OnLoginAttempt) {
+            loginAttempt = (OnLoginAttempt) context;
         } else {
             throw new RuntimeException(context.toString()
-                    + " must implement OnFragmentInteractionListener");
+                    + " must implement OnLoginAttempt");
         }
     }
 
     @Override
     public void onDetach() {
         super.onDetach();
-        mListener = null;
+        loginAttempt = null;
     }
 
     @Override
@@ -94,20 +88,22 @@ public class LoginFragment extends Fragment implements View.OnClickListener{
 
         switch(id){
             case R.id.bt_lf_signin:
+
+                /*
+                Call the callback method on main activity to authenticate the login attempt.
+                 */
+
                 if(validateForm()){
-
-                    login.loginAttempt(et_email.getText().toString(), et_pw.getText().toString());
-
-                    getFragmentManager().beginTransaction()
-                            .setCustomAnimations(R.animator.fade_in, R.animator.fade_out)
-//                            .replace(R.id.fragment, new DashboardFragment())
-                            .commit();
-
+                    onButtonPressed(
+                            et_email.getText().toString(),
+                            et_pw.getText().toString()
+                    );
                 }
                 break;
+
             case R.id.bt_lf_register:
                 fTrans.setCustomAnimations(R.animator.fade_in, R.animator.fade_out);
-//                fTrans.replace(R.id.fragment, new RegisterFragment());
+                fTrans.replace(R.id.Fragment, new RegisterFragment());
                 fTrans.commit();
                 break;
         }
@@ -137,8 +133,8 @@ public class LoginFragment extends Fragment implements View.OnClickListener{
      * "http://developer.android.com/training/basics/fragments/communicating.html"
      * >Communicating with Other Fragments</a> for more information.
      */
-    public interface OnFragmentInteractionListener {
+    public interface OnLoginAttempt {
         // TODO: Update argument type and name
-        void onFragmentInteraction(Uri uri);
+        void OnLoginAttempt(String email, String pw);
     }
 }
