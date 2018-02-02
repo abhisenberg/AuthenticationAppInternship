@@ -1,6 +1,7 @@
 package com.abheisenberg.sampleinternshipapp;
 
 import android.graphics.Color;
+import android.net.Uri;
 import android.support.annotation.NonNull;
 import android.os.Bundle;
 import android.text.TextUtils;
@@ -18,7 +19,8 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.UserProfileChangeRequest;
 
-public class MainActivity extends BaseActivity implements View.OnClickListener {
+public class MainActivity extends BaseActivity implements View.OnClickListener, LoginFragment.OnFragmentInteractionListener,
+                    RegisterFragment.OnFragmentInteractionListener, LoginFragment.Login{
 
     private static final String TAG = "MainAct";
 
@@ -222,5 +224,15 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
         } else if (whichButton == R.id.bt_sendverification){
             sendEmailVerification();
         }
+    }
+
+    @Override
+    public void onFragmentInteraction(Uri uri) {
+
+    }
+
+    @Override
+    public void loginAttempt(String email, String pw) {
+
     }
 }

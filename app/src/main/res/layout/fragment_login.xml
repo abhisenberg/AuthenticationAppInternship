@@ -1,0 +1,57 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="com.abheisenberg.sampleinternshipapp.LoginFragment">
+
+    <EditText
+        android:id="@+id/et_lf_emailid"
+        android:hint="Email Id"
+        android:padding="8dp"
+        android:layout_below="@id/tv_status"
+        android:background="@drawable/etbox_modified_states"
+        android:inputType="textEmailAddress"
+        android:layout_marginTop="45dp"
+        android:layout_marginStart="12dp"
+        android:layout_marginEnd="12dp"
+        android:layout_width="match_parent"
+        android:layout_height="45dp" />
+
+    <EditText
+        android:id="@+id/et_lf_pw"
+        android:hint="Password"
+        android:layout_margin="12dp"
+        android:layout_below="@id/et_lf_emailid"
+        android:padding="8dp"
+        android:background="@drawable/etbox_modified_states"
+        android:inputType="textPassword"
+        android:layout_width="match_parent"
+        android:layout_height="45dp" />
+
+    <LinearLayout
+        android:id="@+id/ll_lf_signin"
+        android:layout_below="@id/et_lf_pw"
+        android:gravity="center"
+        android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+        <Button
+            android:id="@+id/bt_lf_signin"
+            android:text="Sign In"
+            android:textColor="#FFFFFF"
+            android:background="@drawable/button_signin"
+            android:textStyle="bold"
+            android:layout_marginStart="15dp"
+            android:layout_marginEnd="15dp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+        <Button
+            android:id="@+id/bt_lf_register"
+            android:text="No account? Register now!"
+            android:background="#0000"
+            android:textColor="@android:color/holo_green_dark"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+    </LinearLayout>
+
+</RelativeLayout>
