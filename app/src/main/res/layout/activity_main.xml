@@ -15,7 +15,7 @@
         android:layout_marginEnd="12dp"
         android:gravity="center"
         android:textSize="25sp"
-        android:text="Current Status"
+        android:text="Yo"
         android:textStyle="bold"
         android:layout_gravity="center"
         android:layout_width="match_parent"
