@@ -4,13 +4,14 @@
     android:layout_height="match_parent"
     tools:context="com.abheisenberg.sampleinternshipapp.LoginFragment">
 
+
     <EditText
         android:id="@+id/et_lf_emailid"
         android:hint="Email Id"
         android:padding="8dp"
         android:background="@drawable/etbox_modified_states"
         android:inputType="textEmailAddress"
-        android:layout_marginTop="45dp"
+        android:layout_marginTop="70dp"
         android:layout_marginStart="12dp"
         android:layout_marginEnd="12dp"
         android:layout_width="match_parent"

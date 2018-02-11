@@ -22,6 +22,10 @@ import android.widget.EditText;
  */
 public class LoginFragment extends Fragment implements View.OnClickListener{
 
+    /*
+    A login screen that shows two fields to enter email and password and authenticates the user.
+     */
+
     private OnLoginAttempt loginAttempt;
 
     private View rootView;
@@ -102,6 +106,9 @@ public class LoginFragment extends Fragment implements View.OnClickListener{
                 break;
 
             case R.id.bt_lf_register:
+                /*
+                If the user wants to register first, then start the register fragment.
+                 */
                 fTrans.setCustomAnimations(R.animator.fade_in, R.animator.fade_out);
                 fTrans.replace(R.id.Fragment, new RegisterFragment());
                 fTrans.commit();

@@ -12,6 +12,18 @@ import android.view.inputmethod.InputMethodManager;
 
 public class BaseActivity extends AppCompatActivity {
 
+    /*
+    A base activity that will be extended by MainActivity.
+    It contains some necessary functions that can be used across all the fragments.
+
+        This app contains only one activity and several fragments to operate faster,
+        all the fragments do different works like loggin-in, registering etc.
+        Since it is better and cleaner to user more fragments and less activities.
+
+     */
+
+    public static final String KEY_NAME = "name";
+
     public ProgressDialog myLoadingDialog;
 
     public void showLoadingDialog(){
@@ -39,6 +51,10 @@ public class BaseActivity extends AppCompatActivity {
             myLoadingDialog.dismiss();
         }
     }
+
+    /*
+    Simple method to hide the soft touch keyboard.
+     */
 
     public void hideKeyboard(Activity activity){
         InputMethodManager imm = (InputMethodManager) activity

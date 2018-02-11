@@ -12,11 +12,13 @@
 
     <TextView
         android:id="@+id/tv_wf_hello"
-        android:text="Hello\nUser!"
+        android:text="Fetching data..."
         android:textSize="35sp"
         android:layout_centerHorizontal="true"
         android:layout_above="@id/MidPoint"
+        android:textStyle="bold"
         android:layout_marginBottom="25dp"
+        android:gravity="center"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content" />
 
